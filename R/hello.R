@@ -1,0 +1,31 @@
+# Hello, world!
+#
+# This is an example function named 'hello'
+# which prints 'Hello, world!'.
+#
+# You can learn more about package authoring with RStudio at:
+#
+#   https://r-pkgs.org
+#
+# Some useful keyboard shortcuts for package authoring:
+#
+#   Install Package:           'Ctrl + Shift + B'
+#   Check Package:             'Ctrl + Shift + E'
+#   Test Package:              'Ctrl + Shift + T'
+
+hello <- function() {
+  jhw <- .jnew("HelloWorld")
+  .jcall(jhw, "V", "printHello")
+}
+
+reeb2 <- function() {
+  jhw <- .jnew("usf.saav.cmd.MergePairingCLI")
+  .jcall(jhw, "V", "checkReach")
+}
+reeb <- function() {
+  files <- .jarray(c("./files/hello.txt"))
+  print(files)
+
+  jhw <- .jnew("usf.saav.cmd.MergePairingCLI")
+  .jcall(jhw, "V", "main",files)
+}
