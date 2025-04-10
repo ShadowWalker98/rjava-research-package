@@ -18,12 +18,8 @@ hello <- function() {
   .jcall(jhw, "V", "printHello")
 }
 
-reeb2 <- function() {
-  jhw <- .jnew("usf.saav.cmd.MergePairingCLI")
-  .jcall(jhw, "V", "checkReach")
-}
-reeb <- function() {
-  files <- .jarray(c("./files/hello.txt"))
+mergepairing <- function() {
+  files <- .jarray(c("./files/mergepairingtest.txt"))
   print(files)
 
   jhw <- .jnew("usf.saav.cmd.MergePairingCLI")
