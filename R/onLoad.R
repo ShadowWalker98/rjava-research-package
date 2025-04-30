@@ -1,16 +1,23 @@
 .onLoad <- function(libname, pkgname) {
-  .jpackage(pkgname, lib.loc = libname)  # Needed to setup rJava
+  .jpackage(pkgname, lib.loc = libname)
 
-  version <- .jcall("java/lang/System", "S", "getProperty", "java.specification.version")
+  # Get the Java version string, e.g., "1.8", "11", "17", "21"
+  java_version <- .jcall("java/lang/System", "S", "getProperty", "java.specification.version")
 
-  jar_path <- switch(TRUE,
-                     startsWith(version, "21") ~ "java/myLib-java21.jar",
-                     startsWith(version, "11") ~ "java/myLib-java11.jar",
-                     startsWith(version, "1.8") ~ "java/myLib-java8.jar",
-                     stop(sprintf("Unsupported Java version: %s", version))
-  )
+  # Convert to numeric: "1.8" → 8, "11" → 11, etc.
+  version_num <- if (startsWith(java_version, "1.")) {
+    as.numeric(sub("1\\.", "", java_version))
+  } else {
+    as.numeric(java_version)
+  }
 
-  full_path <- system.file(jar_path, package = pkgname)
-  .jaddClassPath(full_path)
-  message(sprintf("Loaded JAR for Java %s: %s", version, basename(full_path)))
+  jar_path <- if (version_num >= 21) {
+    "java/ReebGraphPairing_version_21.jar"
+  } else if (version_num >= 17) {
+    "java/ReebGraphPairing_version_17.jar"
+  } else if (version_num >= 11) {
+    "java/ReebGraphPairing_version_11.jar"
+  } else {
+    stop(sprintf("Unsupported Java version: %s", java_version))
+  }
 }
