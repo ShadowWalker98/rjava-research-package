@@ -1,12 +1,17 @@
-Package: HelloWorld
+Package: ReebGraphPairing
 Type: Package
-Title: Calls Hello from Java Package
+Title:Title: Interface to Java-Based ReebGraphPairing World Functionality Using rJava
 Version: 0.1.0
 Authors@R: c(
     person(
       "Satyajit", "Mohanty",
       email = "mohantysatyajit57@gmail.com",
       role = c("aut", "cre")
+    ),
+    person(
+      "Shubham", "Singh",
+      email = "shubhamus16091998@example.com",
+      role = "aut"
     )
   )
 Description: This is a simple example package that prints 'Hello, world!' to the console.
