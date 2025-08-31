@@ -1,0 +1,40 @@
+#!/usr/bin/env sh
+set -e
+
+echo "==> Compiling Java sources for ReebGraphPairing"
+
+# CP separator
+case "$(uname -s)" in
+  MINGW*|MSYS*|CYGWIN*) CPSEP=';';;
+  *)                    CPSEP=':';;
+esac
+
+# Prefer R-configured tools; fall back to PATH
+JAVAC="$(R CMD config JAVAC || true)"; [ -z "$JAVAC" ] && JAVAC="$(command -v javac || echo javac)"
+JAR="$(R CMD config JAR || true)";     [ -z "$JAR" ]   && JAR="$(command -v jar   || echo jar)"
+
+SRC_DIR="java/src"                  # <-- put it back to java/src
+CLS_DIR="inst/java/classes"
+JAR_OUT="inst/java/ReebGraphPairing.jar"
+
+mkdir -p "$CLS_DIR"
+
+# Collect sources
+if command -v find >/dev/null 2>&1; then
+  find "$SRC_DIR" -name '*.java' > sources.txt
+else
+  R --vanilla --slave -e "writeLines(list.files('$SRC_DIR', pattern='\\\\.java$', recursive=TRUE, full.names=TRUE), 'sources.txt')"
+fi
+
+echo "Using JAVAC: $JAVAC"
+echo "Using JAR:   $JAR"
+echo "Source files: $(wc -l < sources.txt)"
+
+# Compile
+"$JAVAC" -encoding UTF-8 -d "$CLS_DIR" @sources.txt
+
+# Bundle jar
+"$JAR" cf "$JAR_OUT" -C "$CLS_DIR" .
+
+rm -f sources.txt
+echo "==> Java build complete -> $JAR_OUT"

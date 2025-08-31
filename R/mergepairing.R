@@ -23,3 +23,15 @@ mergepairing <- function() {
   # Check the type
   print(rg_list)
 }
+hello_world <- function() {
+  if (!rJava::.jniInitialized) rJava::.jinit()
+
+  # Create a new HelloWorld instance (no package)
+  obj <- rJava::.jnew("HelloWorld")
+
+  # Call instance void method printHello()
+  rJava::.jcall(obj, "V", "printHello")
+
+  invisible(NULL)
+}
+
