@@ -15,4 +15,11 @@ mergepairing <- function() {
 
   jhw <- .jnew("usf.saav.cmd.MergePairingCLI")
   .jcall(jhw, "V", "main",files)
+
+  rg_list <- .jcall(jhw,
+                    returnSig = "Ljava/util/ArrayList;",
+                    method = "getRG")
+
+  # Check the type
+  print(rg_list)
 }
