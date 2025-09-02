@@ -3,7 +3,7 @@ set -e
 
 echo "==> Compiling Java sources for ReebGraphPairing"
 
-# CP separator
+# Classpath separator
 case "$(uname -s)" in
   MINGW*|MSYS*|CYGWIN*) CPSEP=';';;
   *)                    CPSEP=':';;
@@ -13,7 +13,7 @@ esac
 JAVAC="$(R CMD config JAVAC || true)"; [ -z "$JAVAC" ] && JAVAC="$(command -v javac || echo javac)"
 JAR="$(R CMD config JAR || true)";     [ -z "$JAR" ]   && JAR="$(command -v jar   || echo jar)"
 
-SRC_DIR="java/src"                  # <-- put it back to java/src
+SRC_DIR="java/src"
 CLS_DIR="inst/java/classes"
 JAR_OUT="inst/java/ReebGraphPairing.jar"
 
@@ -26,14 +26,21 @@ else
   R --vanilla --slave -e "writeLines(list.files('$SRC_DIR', pattern='\\\\.java$', recursive=TRUE, full.names=TRUE), 'sources.txt')"
 fi
 
+# Build compile classpath: compiled classes + any jars in inst/java/lib
+CP="$CLS_DIR"
+if ls inst/java/lib/*.jar >/dev/null 2>&1; then
+  # join all jars with the OS-specific separator
+  CP_JARS=$(printf "%s$CPSEP" inst/java/lib/*.jar); CP_JARS=${CP_JARS%$CPSEP}
+  CP="${CP}${CPSEP}${CP_JARS}"
+fi
+
 echo "Using JAVAC: $JAVAC"
-echo "Using JAR:   $JAR"
-echo "Source files: $(wc -l < sources.txt)"
+echo "Classpath: $CP"
 
-# Compile
-"$JAVAC" -encoding UTF-8 -d "$CLS_DIR" @sources.txt
+# Compile with classpath (so org.jocl.* is visible)
+"$JAVAC" -encoding UTF-8 -d "$CLS_DIR" -cp "$CP" @sources.txt
 
-# Bundle jar
+# Bundle jar (optional)
 "$JAR" cf "$JAR_OUT" -C "$CLS_DIR" .
 
 rm -f sources.txt

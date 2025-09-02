@@ -34,4 +34,3 @@ hello_world <- function() {
 
   invisible(NULL)
 }
-
