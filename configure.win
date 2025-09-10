@@ -44,4 +44,5 @@ echo "Classpath: $CP"
 "$JAR" cf "$JAR_OUT" -C "$CLS_DIR" .
 
 rm -f sources.txt
+rm -rf inst/java/classes
 echo "==> Java build complete -> $JAR_OUT"
