@@ -24,24 +24,24 @@ public class TestResults {
 	Timer mergeTimer=new TimerNanosecond(), ppTimer=new TimerNanosecond();
 	ArrayList<ReebGraph> rgMP;
 	ArrayList<ReebGraph> rgPP;
-	
+
 	private TestResults() { }
-	
+
 	public static TestResults testPerformance( String inputfile, boolean verbose ) throws Exception {
 
 		TestResults ret= new TestResults();
-		
+
 		ret.initial_verts = ReebGraphLoader.load( inputfile, false, false, verbose ).get(0).size();
-		
+
 		ret.rgMP = runAlgo( inputfile, new MergePairing(), ret.mergeTimer, verbose );
 		ret.rgPP = runAlgo( inputfile, new PropagateAndPair(), ret.ppTimer, verbose );
-		
+
 		ret.conditioned_verts = 0;
 		for( ReebGraph r : ret.rgMP ) {
 			ret.conditioned_verts += r.size();
 		}
 		ret.loops = countLoops(ret.rgMP);
-		
+
 		if( verbose ) System.out.println("\nCOMPARING GRAPHS");
 		if( !compareDiagrams( ret.rgMP, ret.rgPP, verbose ) ) {
 			if( verbose ) System.out.println("ERROR: Difference Found in pairings");
@@ -49,29 +49,29 @@ public class TestResults {
 		}
 		if( verbose ) System.out.println();
 		return ret;
-		
+
 	}
-	
+
 	public static void savePersistentDiagram( ArrayList<ReebGraph> rg0, String filename ) throws FileNotFoundException {
 		ArrayList<ReebGraphVertex> verts0 = new ArrayList<ReebGraphVertex>();
 		for( ReebGraph rg : rg0 ) { verts0.addAll( rg ); }
-		
+
 		PrintWriter pw = new PrintWriter(filename);
 		for( ReebGraphVertex v : verts0 ) {
 			ReebGraphVertex p = (ReebGraphVertex)v.getPartner();
 			if( p != null && v.value() > p.value() ) continue;
-			pw.println( v.getBirth() + " " + v.getDeath() );				
-		}		
-		pw.close();	
-		
+			pw.println( v.getBirth() + " " + v.getDeath() );
+		}
+		pw.close();
+
 	}
-	
-	
+
+
 
 	public static void printPersistentDiagram(ArrayList<ReebGraph> rg0) {
 		ArrayList<ReebGraphVertex> verts0 = new ArrayList<ReebGraphVertex>();
 		for( ReebGraph rg : rg0 ) { verts0.addAll( rg ); }
-		
+
 		verts0.sort( new Comparator<ReebGraphVertex>() {
 			@Override
 			public int compare(ReebGraphVertex o1, ReebGraphVertex o2) {
@@ -82,23 +82,63 @@ public class TestResults {
 				return 0;
 			}
 		});
-		
+
 		for( ReebGraphVertex v : verts0 ) {
 			ReebGraphVertex p = (ReebGraphVertex)v.getPartner();
 			if( p == null ) {
-				System.out.println("  [" + v.getRealValue() + ",INF) " + v.getGlobalID() + "/-1" );				
+				System.out.println("  [" + v.getRealValue() + ",INF) " + v.getGlobalID() + "/-1" );
 			}
 			else {
 				if( v.value() > p.value() ) continue;
 				System.out.println("  [" + v.getRealValue() + "," + p.getRealValue() + ") " + v.getGlobalID() + "/" + p.getGlobalID() );
 			}
-		}				
+		}
 	}
-	
-	public static void printPersistentDiagramCSV(ArrayList<ReebGraph> rg0) {
+	//UFCHANGE
+	public static ArrayList<String> getPersistentDiagramCSV(ArrayList<ReebGraph> rg0) {
+    ArrayList<ReebGraphVertex> verts0 = new ArrayList<>();
+    for (ReebGraph rg : rg0) {
+        verts0.addAll(rg);
+    }
+
+    // Sort vertices by birth, then death
+    verts0.sort(new Comparator<ReebGraphVertex>() {
+        @Override
+        public int compare(ReebGraphVertex o1, ReebGraphVertex o2) {
+            if (o1.getBirth() < o2.getBirth()) return -1;
+            if (o1.getBirth() > o2.getBirth()) return 1;
+            if (o1.getDeath() < o2.getDeath()) return -1;
+            if (o1.getDeath() > o2.getDeath()) return 1;
+            return 0;
+        }
+    });
+
+    // Prepare ArrayList<String> for output
+    ArrayList<String> lines = new ArrayList<>();
+    String header = "birth_value,death_value,birth_index,death_index";
+    System.out.println(header);
+    lines.add(header);
+
+    // Collect and print each line
+    for (ReebGraphVertex v : verts0) {
+        ReebGraphVertex p = (ReebGraphVertex) v.getPartner();
+        String line;
+        if (p == null) {
+            line = v.getRealValue() + ",INF," + v.getGlobalID() + ",-1";
+        } else {
+            if (v.value() > p.value()) continue;
+            line = v.getRealValue() + "," + p.getRealValue() + "," + v.getGlobalID() + "," + p.getGlobalID();
+        }
+        System.out.println(line);   // Print to console
+        lines.add(line);            // Add to list
+    }
+
+    return lines; // Return list for R side
+}
+public static void printPersistentDiagramCSV(ArrayList<ReebGraph> rg0) {
 		ArrayList<ReebGraphVertex> verts0 = new ArrayList<ReebGraphVertex>();
 		for( ReebGraph rg : rg0 ) { verts0.addAll( rg ); }
-		
+
 		verts0.sort( new Comparator<ReebGraphVertex>() {
 			@Override
 			public int compare(ReebGraphVertex o1, ReebGraphVertex o2) {
@@ -109,27 +149,27 @@ public class TestResults {
 				return 0;
 			}
 		});
-		
-		System.out.println("birth_value,death_value,birth_index,death_index");	
+
+		System.out.println("birth_value,death_value,birth_index,death_index");
 		for( ReebGraphVertex v : verts0 ) {
 			ReebGraphVertex p = (ReebGraphVertex)v.getPartner();
 			if( p == null ) {
-				System.out.println("" + v.getRealValue() + ",INF," + v.getGlobalID() + ",-1" );				
+				System.out.println("" + v.getRealValue() + ",INF," + v.getGlobalID() + ",-1" );
 			}
 			else {
 				if( v.value() > p.value() ) continue;
 				System.out.println("" + v.getRealValue() + "," + p.getRealValue() + "," + v.getGlobalID() + "," + p.getGlobalID() );
 			}
-		}				
-	}	
-	
+		}
+	}
+
 	public static boolean compareDiagrams( ArrayList<ReebGraph> rg0, ArrayList<ReebGraph> rg1, boolean verbose ) {
-		
+
 		ArrayList<ReebGraphVertex> verts0 = new ArrayList<ReebGraphVertex>();
 		ArrayList<ReebGraphVertex> verts1 = new ArrayList<ReebGraphVertex>();
 		for( ReebGraph rg : rg0 ) { verts0.addAll( rg ); }
 		for( ReebGraph rg : rg1 ) { verts1.addAll( rg ); }
-		
+
 		verts0.sort( new Comparator<ReebGraphVertex>() {
 			@Override
 			public int compare(ReebGraphVertex o1, ReebGraphVertex o2) {
@@ -140,7 +180,7 @@ public class TestResults {
 				return 0;
 			}
 		});
-		
+
 		boolean ret = true;
 		for( ReebGraphVertex v : verts0 ) {
 			ReebGraphVertex p = (ReebGraphVertex)v.getPartner();
@@ -161,19 +201,19 @@ public class TestResults {
 		}
 		return ret;
 	}
-	
+
 	public static ArrayList<ReebGraph> runAlgo( String inputfile, Pairing pairing, Timer timer, boolean verbose ) throws Exception {
 		Timer t = new TimerMillisecond();
 
 		if( verbose ) System.out.println( );
 		if( verbose ) System.out.println( pairing.getName() );
-		
+
 		t.start();
 		ArrayList<ReebGraph> rm1 = ReebGraphLoader.load(inputfile,true,true,verbose);
 		t.end();
 		if( verbose ) System.out.println(" Load time: " + t.getElapsedMilliseconds() + "ms");
 		if( verbose ) System.out.println(" Connected components: " + rm1.size());
-		
+
 		timer.start();
 		for( ReebGraph ccRG : rm1 ) {
 			pairing.pair(ccRG);
@@ -184,11 +224,11 @@ public class TestResults {
 		if( verbose ) System.out.println(" " + pairing.getName() + " computation time: " + timer.getElapsedMilliseconds() + "ms\n");
 		if( verbose ) System.out.println(" PERSISTENCE DIAGRAM");
 		//if( verbose ) printPersistentDiagram(rm1);
-		
+
 		return rm1;
 	}
-	
-	
+
+
 	private static int countLoops(ArrayList<ReebGraph> rg0) {
 		ArrayList<ReebGraphVertex> verts0 = new ArrayList<ReebGraphVertex>();
 		for( ReebGraph rg : rg0 ) { verts0.addAll( rg ); }
@@ -199,9 +239,9 @@ public class TestResults {
 				ret++;
 			}
 		}
-		
+
 		return ret;
 	}
-	
-	
+
+
 }

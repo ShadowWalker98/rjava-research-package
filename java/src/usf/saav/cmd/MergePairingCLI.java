@@ -38,8 +38,9 @@ import usf.saav.topology.reebgraph.pairing.MergePairing;
 public class MergePairingCLI {
   //change rg to null to test
   static ArrayList<ReebGraph> rg = null;
-	public static ArrayList<ReebGraph> getRG() {
-		return rg;
+    static ArrayList<String> finalGraph = null;
+	public static ArrayList<String> getFinalGraph() {
+		return finalGraph;
 	}
 
 	public static void main(String[] args) {
@@ -60,7 +61,7 @@ public class MergePairingCLI {
 				try {
 					System.out.println(ip);
 				  rg = TestResults.runAlgo( ip, new MergePairing(), new TimerNanosecond(), false );
-					TestResults.printPersistentDiagramCSV( rg );
+					finalGraph=TestResults.getPersistentDiagramCSV( rg );
 					System.out.println();
 				} catch (Exception e) {
 					e.printStackTrace();
