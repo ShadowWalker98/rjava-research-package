@@ -38,8 +38,8 @@ import usf.saav.topology.reebgraph.pairing.MergePairing;
 public class MergePairingCLI {
   //change rg to null to test
   static ArrayList<ReebGraph> rg = null;
-    static ArrayList<String> finalGraph = null;
-	public static ArrayList<String> getFinalGraph() {
+  static String[] finalGraph = null;
+	public static String[] getFinalGraph() {
 		return finalGraph;
 	}
 

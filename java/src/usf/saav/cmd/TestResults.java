@@ -95,7 +95,7 @@ public class TestResults {
 		}
 	}
 	//UFCHANGE
-	public static ArrayList<String> getPersistentDiagramCSV(ArrayList<ReebGraph> rg0) {
+	public static String[] getPersistentDiagramCSV(ArrayList<ReebGraph> rg0) {
     ArrayList<ReebGraphVertex> verts0 = new ArrayList<>();
     for (ReebGraph rg : rg0) {
         verts0.addAll(rg);
@@ -129,11 +129,17 @@ public class TestResults {
             if (v.value() > p.value()) continue;
             line = v.getRealValue() + "," + p.getRealValue() + "," + v.getGlobalID() + "," + p.getGlobalID();
         }
-        System.out.println(line);   // Print to console
+        System.out.println(line);
         lines.add(line);            // Add to list
     }
 
-    return lines; // Return list for R side
+    String[] finalArrayObject = new String[lines.size()];
+    for(int i = 0; i < lines.size(); i++) {
+      finalArrayObject[i] = lines.get(i);
+    }
+
+
+    return finalArrayObject; // Return list for R side
 }
 public static void printPersistentDiagramCSV(ArrayList<ReebGraph> rg0) {
 		ArrayList<ReebGraphVertex> verts0 = new ArrayList<ReebGraphVertex>();

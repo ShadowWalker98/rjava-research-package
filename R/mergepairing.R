@@ -16,10 +16,27 @@ mergepairing <- function() {
   jhw <- .jnew("usf.saav.cmd.MergePairingCLI")
   .jcall(jhw, "V", "main",files)
 
-  rg_list <- .jcall(jhw,
-                    returnSig = "Ljava/util/ArrayList;",
-                    method = "getFinalGraph")
+  rlist <- .jcall("usf/saav/cmd/MergePairingCLI",
+                 "[Ljava/lang/String;", "getFinalGraph")
 
+  csv_text <- paste(rlist, collapse = "\n")
+
+  df <- read.csv(text = csv_text,
+                 colClasses = c(
+                   birth_value  = "numeric",
+                   death_value  = "numeric",
+                   birth_index  = "integer",
+                   death_index  = "integer"
+                 ))
+  head(df)
+
+
+  #rvec <- .jevalArray(jarr, strings = TRUE)
+  #print(typeof(rvec))
+  #print(rvec)
   # Check the type
-  print(rg_list)
+  # print(rg_list)
+
+  # rlist <- .jevalArray(rg_list)
+  # print(rlist)
 }
