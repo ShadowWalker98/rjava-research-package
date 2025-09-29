@@ -19,16 +19,34 @@ mergepairing <- function() {
   rlist <- .jcall("usf/saav/cmd/MergePairingCLI",
                  "[Ljava/lang/String;", "getFinalGraph")
 
-  csv_text <- paste(rlist, collapse = "\n")
+  pValues <- .jcall("usf/saav/cmd/MergePairingCLI",
+                    "[F", "getPValues")
 
-  df <- read.csv(text = csv_text,
-                 colClasses = c(
-                   birth_value  = "numeric",
-                   death_value  = "numeric",
-                   birth_index  = "integer",
-                   death_index  = "integer"
-                 ))
-  head(df)
+  pRealValues <- .jcall("usf/saav/cmd/MergePairingCLI",
+                        "[F", "getPRealValues")
+
+  vValues <- .jcall("usf/saav/cmd/MergePairingCLI",
+                    "[F", "getVValues")
+
+  vRealValues <- .jcall("usf/saav/cmd/MergePairingCLI",
+                        "[F", "getVRealValues")
+
+  print(pValues)
+  print(pRealValues)
+  print(vValues)
+  print(vRealValues)
+
+  # csv_text <- paste(rlist, collapse = "\n")
+
+  #df <- read.csv(text = csv_text,
+  #               colClasses = c(
+  #                 birth_value  = "numeric",
+  #                 death_value  = "numeric",
+  #                 birth_index  = "integer",
+  #                 death_index  = "integer"
+  #               ))
+  # head(df)
+
 
 
   #rvec <- .jevalArray(jarr, strings = TRUE)
