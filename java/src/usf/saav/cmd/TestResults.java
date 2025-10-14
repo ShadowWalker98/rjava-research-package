@@ -172,12 +172,15 @@ public class TestResults {
                 resultList.vValues.add(-1.0f);
                 resultList.pRealValues.add(-1.0f);
                 resultList.vRealValues.add(-1.0f);
+                resultList.vGlobalIDs.add(v.getGlobalID());
             } else {
                 if (v.value() > p.value()) continue;
                 resultList.pValues.add(p.value());
                 resultList.vValues.add(v.value());
                 resultList.pRealValues.add(p.getRealValue());
                 resultList.vRealValues.add(v.getRealValue());
+                resultList.pGlobalIDs.add(p.getGlobalID());
+                resultList.vGlobalIDs.add(v.getGlobalID());
             }
         }
 

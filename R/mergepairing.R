@@ -11,14 +11,19 @@
 #' @export
 
 mergepairing <- function() {
+  # reading in a sample test file
   files <- .jarray(c("./files/mergepairingtest.txt"))
 
+  # creating a java object of type MergePairingCLI
   jhw <- .jnew("usf.saav.cmd.MergePairingCLI")
+  # calling the main method on that instance
   .jcall(jhw, "V", "main",files)
 
+  # retrieving the prepopulated list
   rlist <- .jcall("usf/saav/cmd/MergePairingCLI",
                  "[Ljava/lang/String;", "getFinalGraph")
 
+  # retrieving the information we want
   pValues <- .jcall("usf/saav/cmd/MergePairingCLI",
                     "[F", "getPValues")
 
@@ -30,6 +35,17 @@ mergepairing <- function() {
 
   vRealValues <- .jcall("usf/saav/cmd/MergePairingCLI",
                         "[F", "getVRealValues")
+
+  # [], [], [], []
+
+  # 2 col matrix from java -> R
+
+  #. pick an example, visually show the example,
+
+  # []
+  # []
+  # []
+  # []
 
   print(pValues)
   print(pRealValues)
