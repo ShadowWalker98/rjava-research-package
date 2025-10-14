@@ -42,6 +42,8 @@ public class MergePairingCLI {
     static  List<Float> vValues = new ArrayList<>();
     static  List<Float> pRealValues = new ArrayList<>();
     static List<Float> vRealValues = new ArrayList<>();
+    static List<Integer> pGlobalIDs = new ArrayList<>();
+    static List<Integer> vGlobalIDs = new ArrayList<>();
     static String[] finalGraph = null;
 
     public static String[] getFinalGraph() {
@@ -71,6 +73,8 @@ public class MergePairingCLI {
                     vValues = resultList.vValues;
                     pRealValues = resultList.pRealValues;
                     vRealValues = resultList.vRealValues;
+                    pGlobalIDs = resultList.pGlobalIDs;
+                    vGlobalIDs = resultList.vGlobalIDs;
                     System.out.println();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -79,7 +83,7 @@ public class MergePairingCLI {
         }
     }
 
-    private static float[] convertListToArray(List<Float> list) {
+    private static float[] convertFloatListToArray(List<Float> list) {
         float[] arr = new float[list.size()];
         for(int i = 0; i < list.size(); i++) {
             arr[i] = list.get(i);
@@ -87,19 +91,29 @@ public class MergePairingCLI {
         return arr;
     }
 
+    private static int[] convertIntegerListToArray(List<Integer> list) {
+        int[] arr = new int[list.size()];
+        for(int i = 0; i < list.size(); i++) {
+            arr[i] = list.get(i);
+        }
+        return arr;
+    }
+
     public static float[] getPRealValues() {
-        return convertListToArray(pRealValues);
+        return convertFloatListToArray(pRealValues);
     }
 
     public static float[] getVRealValues() {
-        return convertListToArray(vRealValues);
+        return convertFloatListToArray(vRealValues);
     }
     public static float[] getPValues() {
-        return convertListToArray(pValues);
+        return convertFloatListToArray(pValues);
     }
     public static float[] getVValues() {
-        return convertListToArray(vValues);
+        return convertFloatListToArray(vValues);
     }
+    public static int[] getPGlobalIDs() {return convertIntegerListToArray(pGlobalIDs);}
+    public static int[] getVGlobalIDs() {return convertIntegerListToArray(vGlobalIDs);}
 }
 
 

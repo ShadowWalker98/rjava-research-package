@@ -23,7 +23,8 @@ mergepairing <- function() {
   rlist <- .jcall("usf/saav/cmd/MergePairingCLI",
                  "[Ljava/lang/String;", "getFinalGraph")
 
-  # retrieving the information we want
+  # retrieving the separate lists
+
   pValues <- .jcall("usf/saav/cmd/MergePairingCLI",
                     "[F", "getPValues")
 
@@ -36,41 +37,16 @@ mergepairing <- function() {
   vRealValues <- .jcall("usf/saav/cmd/MergePairingCLI",
                         "[F", "getVRealValues")
 
-  # [], [], [], []
+  pGlobalIDs <- .jcall("usf/saav/cmd/MergePairingCLI",
+                       "[I", "getPGlobalIDs")
 
-  # 2 col matrix from java -> R
-
-  #. pick an example, visually show the example,
-
-  # []
-  # []
-  # []
-  # []
+  vGlobalIDs <- .jcall("usf/saav/cmd/MergePairingCLI",
+                       "[I", "getVGlobalIDs")
 
   print(pValues)
   print(pRealValues)
   print(vValues)
   print(vRealValues)
-
-  # csv_text <- paste(rlist, collapse = "\n")
-
-  #df <- read.csv(text = csv_text,
-  #               colClasses = c(
-  #                 birth_value  = "numeric",
-  #                 death_value  = "numeric",
-  #                 birth_index  = "integer",
-  #                 death_index  = "integer"
-  #               ))
-  # head(df)
-
-
-
-  #rvec <- .jevalArray(jarr, strings = TRUE)
-  #print(typeof(rvec))
-  #print(rvec)
-  # Check the type
-  # print(rg_list)
-
-  # rlist <- .jevalArray(rg_list)
-  # print(rlist)
+  print(pGlobalIDs)
+  print(vGlobalIDs)
 }
