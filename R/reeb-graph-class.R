@@ -101,5 +101,5 @@ read_reeb_graph <- function(file) {
   tolist <- as.integer(gsub("^e [0-9]+ ([0-9]+)$", "\\1", edgelist))
   edgelist <- cbind(fromlist, tolist)
 
-  reeb_graph(values = v_values, edgelist = edgelist)
+  reeb_graph(values = values, edgelist = edgelist)
 }
