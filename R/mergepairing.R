@@ -11,26 +11,42 @@
 #' @export
 
 mergepairing <- function() {
+  # reading in a sample test file
   files <- .jarray(c("./files/mergepairingtest.txt"))
 
+  # creating a java object of type MergePairingCLI
   jhw <- .jnew("usf.saav.cmd.MergePairingCLI")
+  # calling the main method on that instance
   .jcall(jhw, "V", "main",files)
 
-  rg_list <- .jcall(jhw,
-                    returnSig = "Ljava/util/ArrayList;",
-                    method = "getRG")
+  # retrieving the prepopulated list
+  rlist <- .jcall("usf/saav/cmd/MergePairingCLI",
+                 "[Ljava/lang/String;", "getFinalGraph")
 
-  # Check the type
-  print(rg_list)
-}
-hello_world <- function() {
-  if (!rJava::.jniInitialized) rJava::.jinit()
+  # retrieving the separate lists
 
-  # Create a new HelloWorld instance (no package)
-  obj <- rJava::.jnew("HelloWorld")
+  pValues <- .jcall("usf/saav/cmd/MergePairingCLI",
+                    "[F", "getPValues")
 
-  # Call instance void method printHello()
-  rJava::.jcall(obj, "V", "printHello")
+  pRealValues <- .jcall("usf/saav/cmd/MergePairingCLI",
+                        "[F", "getPRealValues")
 
-  invisible(NULL)
+  vValues <- .jcall("usf/saav/cmd/MergePairingCLI",
+                    "[F", "getVValues")
+
+  vRealValues <- .jcall("usf/saav/cmd/MergePairingCLI",
+                        "[F", "getVRealValues")
+
+  pGlobalIDs <- .jcall("usf/saav/cmd/MergePairingCLI",
+                       "[I", "getPGlobalIDs")
+
+  vGlobalIDs <- .jcall("usf/saav/cmd/MergePairingCLI",
+                       "[I", "getVGlobalIDs")
+
+  print(pValues)
+  print(pRealValues)
+  print(vValues)
+  print(vRealValues)
+  print(pGlobalIDs)
+  print(vGlobalIDs)
 }
