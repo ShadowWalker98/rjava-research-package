@@ -21,6 +21,7 @@
 #'   values = c(0, .4, .6, 1),
 #'   edgelist = rbind(c(0, 1), c(0, 2), c(1, 3), c(2, 3))
 #' )
+#' print(x)
 #'
 #' read_reeb_graph("files/mergepairingtest.txt")
 #'
@@ -90,13 +91,15 @@ read_reeb_graph <- function(file) {
   lines <- readLines(file)
 
   values <- lines[grepl("^v ", lines)]
-  values <- gsub("^v [0-9]+ ([0-9\\.]+)$", "\\1", values)
-  values <- as.numeric(values)
+  indices <- as.integer(gsub("^v ([0-9]+) [0-9\\.]+$", "\\1", values))
+  order_indices <- order(indices)
+  values <- as.numeric(gsub("^v [0-9]+ ([0-9\\.]+)$", "\\1", values))
+  values <- values[order_indices]
 
   edgelist <- lines[grepl("^e ", lines)]
-  fromlist <- gsub("^e ([0-9]+) [0-9]+$", "\\1", edgelist)
-  tolist <- gsub("^e [0-9]+ ([0-9]+)$", "\\1", edgelist)
-  edgelist <- cbind(as.integer(fromlist), as.integer(tolist))
+  fromlist <- as.integer(gsub("^e ([0-9]+) [0-9]+$", "\\1", edgelist))
+  tolist <- as.integer(gsub("^e [0-9]+ ([0-9]+)$", "\\1", edgelist))
+  edgelist <- cbind(fromlist, tolist)
 
-  reeb_graph(values = values, edgelist = edgelist)
+  reeb_graph(values = v_values, edgelist = edgelist)
 }

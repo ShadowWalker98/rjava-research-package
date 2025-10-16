@@ -1,6 +1,6 @@
 Package: ReebGraphPairing
 Type: Package
-Title:Title: Interface to Java-Based ReebGraphPairing World Functionality Using rJava
+Title: Title: Interface to Java-Based ReebGraphPairing World Functionality Using rJava
 Version: 0.1.0
 Authors@R: c(
     person(
@@ -23,4 +23,4 @@ Repository: CRAN
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
