@@ -11,32 +11,42 @@
 #' @export
 
 mergepairing <- function() {
+  # reading in a sample test file
   files <- .jarray(c("./files/mergepairingtest.txt"))
 
+  # creating a java object of type MergePairingCLI
   jhw <- .jnew("usf.saav.cmd.MergePairingCLI")
+  # calling the main method on that instance
   .jcall(jhw, "V", "main",files)
 
+  # retrieving the prepopulated list
   rlist <- .jcall("usf/saav/cmd/MergePairingCLI",
                  "[Ljava/lang/String;", "getFinalGraph")
 
-  csv_text <- paste(rlist, collapse = "\n")
+  # retrieving the separate lists
 
-  df <- read.csv(text = csv_text,
-                 colClasses = c(
-                   birth_value  = "numeric",
-                   death_value  = "numeric",
-                   birth_index  = "integer",
-                   death_index  = "integer"
-                 ))
-  head(df)
+  pValues <- .jcall("usf/saav/cmd/MergePairingCLI",
+                    "[F", "getPValues")
 
+  pRealValues <- .jcall("usf/saav/cmd/MergePairingCLI",
+                        "[F", "getPRealValues")
 
-  #rvec <- .jevalArray(jarr, strings = TRUE)
-  #print(typeof(rvec))
-  #print(rvec)
-  # Check the type
-  # print(rg_list)
+  vValues <- .jcall("usf/saav/cmd/MergePairingCLI",
+                    "[F", "getVValues")
 
-  # rlist <- .jevalArray(rg_list)
-  # print(rlist)
+  vRealValues <- .jcall("usf/saav/cmd/MergePairingCLI",
+                        "[F", "getVRealValues")
+
+  pGlobalIDs <- .jcall("usf/saav/cmd/MergePairingCLI",
+                       "[I", "getPGlobalIDs")
+
+  vGlobalIDs <- .jcall("usf/saav/cmd/MergePairingCLI",
+                       "[I", "getVGlobalIDs")
+
+  print(pValues)
+  print(pRealValues)
+  print(vValues)
+  print(vRealValues)
+  print(pGlobalIDs)
+  print(vGlobalIDs)
 }
