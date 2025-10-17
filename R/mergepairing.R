@@ -49,4 +49,15 @@ mergepairing <- function() {
   print(vRealValues)
   print(pGlobalIDs)
   print(vGlobalIDs)
+
+  res <- data.frame(
+    birth_value = vRealValues,
+    death_value = pRealValues,
+    birth_index = vGlobalIDs,
+    death_index = pGlobalIDs,
+    # need to carefully interpret these
+    birth_order = vValues,
+    death_order = pValues
+  )
+  res
 }
