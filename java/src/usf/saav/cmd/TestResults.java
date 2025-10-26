@@ -286,6 +286,42 @@ public class TestResults {
         return rm1;
     }
 
+    // UF version
+
+    public static ArrayList<ReebGraph> runAlgoWithLists(int[] vertexIds,
+                                                        float[] vertexWeights,
+                                                        int[] edgeOriginIds,
+                                                        int[] edgeDestinationIds,
+                                                        Pairing pairing,
+                                                        Timer timer,
+                                                        boolean verbose) throws Exception {
+        Timer t = new TimerMillisecond();
+
+        if (verbose) System.out.println();
+        if (verbose) System.out.println(pairing.getName());
+
+        t.start();
+
+        MergePairingInput mergePairingInput = new MergePairingInput(vertexIds, vertexWeights, edgeOriginIds, edgeDestinationIds);
+        ArrayList<ReebGraph> rm1 = ReebGraphLoader.loadCustomReebGraph(mergePairingInput, true, true, verbose);
+        t.end();
+        if (verbose) System.out.println(" Load time: " + t.getElapsedMilliseconds() + "ms");
+        if (verbose) System.out.println(" Connected components: " + rm1.size());
+
+        timer.start();
+        for (ReebGraph ccRG : rm1) {
+            pairing.pair(ccRG);
+        }
+        timer.end();
+
+        if (verbose) System.out.println(" Total Loops: " + countLoops(rm1));
+        if (verbose)
+            System.out.println(" " + pairing.getName() + " computation time: " + timer.getElapsedMilliseconds() + "ms\n");
+        if (verbose) System.out.println(" PERSISTENCE DIAGRAM");
+
+        return rm1;
+    }
+
 
     private static int countLoops(ArrayList<ReebGraph> rg0) {
         ArrayList<ReebGraphVertex> verts0 = new ArrayList<ReebGraphVertex>();

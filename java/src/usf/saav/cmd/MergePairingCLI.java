@@ -27,9 +27,12 @@
  */
 package usf.saav.cmd;
 
+import usf.saav.common.Timer;
 import usf.saav.common.TimerNanosecond;
 import usf.saav.topology.reebgraph.ReebGraph;
 import usf.saav.topology.reebgraph.pairing.MergePairing;
+import usf.saav.topology.reebgraph.pairing.Pairing;
+
 import java.util.*;
 
 import java.util.ArrayList;
@@ -80,6 +83,30 @@ public class MergePairingCLI {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    public static void customDriver(int[] vertexIds,
+                                    float[] vertexWeights,
+                                    int[] edgeOriginIds,
+                                    int[] edgeDestinationIds) {
+        try {
+            rg = TestResults.runAlgoWithLists(vertexIds,
+                    vertexWeights,
+                    edgeOriginIds,
+                    edgeDestinationIds,
+                    new MergePairing(),
+                    new TimerNanosecond(),
+                    false);
+            ResultList resultList = TestResults.getResultList(rg);
+            pValues = resultList.pValues;
+            vValues = resultList.vValues;
+            pRealValues = resultList.pRealValues;
+            vRealValues = resultList.vRealValues;
+            pGlobalIDs = resultList.pGlobalIDs;
+            vGlobalIDs = resultList.vGlobalIDs;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

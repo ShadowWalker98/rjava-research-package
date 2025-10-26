@@ -1,8 +1,11 @@
 package usf.saav.topology.reebgraph;
 
 
+import usf.saav.cmd.MergePairingInput;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,6 +19,70 @@ import java.util.Queue;
 public class ReebGraphLoader extends ReebGraph {
 
 	private static final long serialVersionUID = 7889260039234787058L;
+
+    public static ArrayList<ReebGraph> loadCustomReebGraph(MergePairingInput mergePairingInput,
+                                                           boolean splitConnComps,
+                                                           boolean condition,
+                                                           boolean showWarnings) throws Exception {
+        HashMap<Integer, ReebGraphVertex> rvmap = new HashMap<Integer, ReebGraphVertex>();
+        ReebGraph tmpRG = new ReebGraph();
+
+        if(mergePairingInput.getVertexWeights().length != mergePairingInput.getVertexIds().length) {
+            throw new Exception("ERROR: Length of vertex ID array and vertex weight array do not match!");
+        }
+        if(mergePairingInput.getEdgeDestinationIds().length != mergePairingInput.getEdgeOriginIds().length) {
+            throw new Exception("ERROR: Edge ID array and edge origin IDs do not match!");
+        }
+
+        if(mergePairingInput.getVertexIds().length == 0 || mergePairingInput.getVertexWeights().length == 0) {
+            throw new Exception("ERROR: Vertex ID array or vertex weights array have length 0");
+        }
+
+        if(mergePairingInput.getEdgeOriginIds().length == 0 || mergePairingInput.getEdgeDestinationIds().length == 0) {
+            throw new Exception("ERROR: Edge ID array or edge origin IDs have length 0");
+        }
+
+        for(int i = 0; i < mergePairingInput.getVertexIds().length; i++) {
+            int v =  mergePairingInput.getVertexIds()[i];
+            float fn = mergePairingInput.getVertexWeights()[i];
+
+            ReebGraphVertex newR = new ReebGraphVertex(fn, fn, v);
+            tmpRG.add(newR);
+            rvmap.put(v, newR);
+        }
+
+        for(int i = 0; i < mergePairingInput.getEdgeOriginIds().length; i++) {
+            ReebGraphVertex v1 = rvmap.get(mergePairingInput.getEdgeOriginIds()[i]);
+            ReebGraphVertex v2 = rvmap.get(mergePairingInput.getEdgeDestinationIds()[i]);
+
+            if(v1 == null || v2 == null) {
+                throw new Exception("ERROR: Edge input is invalid for edge numbered: " + i);
+            }
+            if( v1 == v2 ) {
+                if( showWarnings ) System.err.println("WARNING: Self referenced edge (ignored) " + v1 + " " + v2 );
+                continue;
+            }
+
+            v1.addNeighbor(v2);
+            v2.addNeighbor(v1);
+        }
+
+        tmpRG.resetInternalIDs();
+        tmpRG.resetInternalValues();
+
+        if( splitConnComps ) {
+            return extractConnectedGraphs( rvmap.values(), condition );
+        }
+        else {
+            ArrayList<ReebGraph> ret = new ArrayList<ReebGraph>();
+            if( condition )
+                ret.add( condition( rvmap.values(), 0.05f ) );
+            else
+                ret.add( tmpRG );
+            return ret;
+        }
+
+    }
 
 	public static ArrayList<ReebGraph> load(String inputReebGraph,  boolean splitConnComps, boolean condition, boolean showWarnings ) throws Exception {
 
