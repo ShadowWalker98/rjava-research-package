@@ -25,6 +25,8 @@ public class TestResults {
     Timer mergeTimer = new TimerNanosecond(), ppTimer = new TimerNanosecond();
     ArrayList<ReebGraph> rgMP;
     ArrayList<ReebGraph> rgPP;
+    int timeElapsedMergePairing;
+
 
     private TestResults() {
     }
@@ -288,7 +290,7 @@ public class TestResults {
 
     // UF version
 
-    public static ArrayList<ReebGraph> runAlgoWithLists(int[] vertexIds,
+    public static MergePairingResult runAlgo(int[] vertexIds,
                                                         float[] vertexWeights,
                                                         int[] edgeOriginIds,
                                                         int[] edgeDestinationIds,
@@ -300,26 +302,28 @@ public class TestResults {
         if (verbose) System.out.println();
         if (verbose) System.out.println(pairing.getName());
 
-        t.start();
+
 
         MergePairingInput mergePairingInput = new MergePairingInput(vertexIds, vertexWeights, edgeOriginIds, edgeDestinationIds);
-        ArrayList<ReebGraph> rm1 = ReebGraphLoader.loadCustomReebGraph(mergePairingInput, true, true, verbose);
-        t.end();
-        if (verbose) System.out.println(" Load time: " + t.getElapsedMilliseconds() + "ms");
+        ArrayList<ReebGraph> rm1 = ReebGraphLoader.load(mergePairingInput, true, true, verbose);
+
         if (verbose) System.out.println(" Connected components: " + rm1.size());
 
+        // TODO: Add information about elapsed time for the algorithm and send this back to R
         timer.start();
         for (ReebGraph ccRG : rm1) {
             pairing.pair(ccRG);
         }
         timer.end();
 
+        MergePairingResult result = new MergePairingResult(rm1, timer.getElapsedMilliseconds());
+
         if (verbose) System.out.println(" Total Loops: " + countLoops(rm1));
         if (verbose)
             System.out.println(" " + pairing.getName() + " computation time: " + timer.getElapsedMilliseconds() + "ms\n");
         if (verbose) System.out.println(" PERSISTENCE DIAGRAM");
 
-        return rm1;
+        return result;
     }
 
 

@@ -11,6 +11,10 @@
 #' @export
 
 mergepairing <- function(vertex_indices, vertex_values, edges_from, edges_to) {
+
+  # change value to height
+  # do floats and doubles differ for R and java
+
   # reading in a sample test file
   files <- .jarray(c("./files/mergepairingtest.txt"))
   # converting R vectors into the required format for java
@@ -22,7 +26,7 @@ mergepairing <- function(vertex_indices, vertex_values, edges_from, edges_to) {
   # creating a java object of type MergePairingCLI
   jhw <- .jnew("usf.saav.cmd.MergePairingCLI")
   # calling method to run merge pairing algorithm for custom lists
-  .jcall(jhw, "V", "customDriver", vertex_indices_java, vertex_values_java, edges_from_java, edges_to_java)
+  .jcall(jhw, "V", "mainR", vertex_indices_java, vertex_values_java, edges_from_java, edges_to_java)
 
   # retrieving the prepopulated list
   rlist <- .jcall("usf/saav/cmd/MergePairingCLI",
@@ -47,6 +51,9 @@ mergepairing <- function(vertex_indices, vertex_values, edges_from, edges_to) {
   vGlobalIDs <- .jcall("usf/saav/cmd/MergePairingCLI",
                        "[I", "getVGlobalIDs")
 
+  elapsedTime <- .jcall("usf/saav/cmd/MergePairingCLI",
+                        "D", "getElapsedTime")
+
   res <- data.frame(
     birth_value = vRealValues,
     death_value = pRealValues,
@@ -54,7 +61,8 @@ mergepairing <- function(vertex_indices, vertex_values, edges_from, edges_to) {
     death_index = pGlobalIDs,
     # need to carefully interpret these
     birth_order = vValues,
-    death_order = pValues
+    death_order = pValues,
+    elapsedTime = elapsedTime
   )
   res
 }

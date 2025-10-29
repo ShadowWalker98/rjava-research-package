@@ -27,11 +27,9 @@
  */
 package usf.saav.cmd;
 
-import usf.saav.common.Timer;
 import usf.saav.common.TimerNanosecond;
 import usf.saav.topology.reebgraph.ReebGraph;
 import usf.saav.topology.reebgraph.pairing.MergePairing;
-import usf.saav.topology.reebgraph.pairing.Pairing;
 
 import java.util.*;
 
@@ -48,6 +46,7 @@ public class MergePairingCLI {
     static List<Integer> pGlobalIDs = new ArrayList<>();
     static List<Integer> vGlobalIDs = new ArrayList<>();
     static String[] finalGraph = null;
+    static double elapsedTime = 0;
 
     public static String[] getFinalGraph() {
         return finalGraph;
@@ -86,18 +85,21 @@ public class MergePairingCLI {
         }
     }
 
-    public static void customDriver(int[] vertexIds,
+    public static void mainR(int[] vertexIds,
                                     float[] vertexWeights,
                                     int[] edgeOriginIds,
                                     int[] edgeDestinationIds) {
         try {
-            rg = TestResults.runAlgoWithLists(vertexIds,
+            usf.saav.cmd.MergePairingResult result = TestResults.runAlgo(vertexIds,
                     vertexWeights,
                     edgeOriginIds,
                     edgeDestinationIds,
                     new MergePairing(),
                     new TimerNanosecond(),
                     false);
+            rg = result.getReebGraphArrayList();
+            elapsedTime = result.getElapsedTime();
+
             ResultList resultList = TestResults.getResultList(rg);
             pValues = resultList.pValues;
             vValues = resultList.vValues;
@@ -141,6 +143,7 @@ public class MergePairingCLI {
     }
     public static int[] getPGlobalIDs() {return convertIntegerListToArray(pGlobalIDs);}
     public static int[] getVGlobalIDs() {return convertIntegerListToArray(vGlobalIDs);}
+    public static double getElapsedTime() {return elapsedTime;}
 }
 
 

@@ -20,7 +20,7 @@ public class ReebGraphLoader extends ReebGraph {
 
 	private static final long serialVersionUID = 7889260039234787058L;
 
-    public static ArrayList<ReebGraph> loadCustomReebGraph(MergePairingInput mergePairingInput,
+    public static ArrayList<ReebGraph> load(MergePairingInput mergePairingInput,
                                                            boolean splitConnComps,
                                                            boolean condition,
                                                            boolean showWarnings) throws Exception {
@@ -81,7 +81,6 @@ public class ReebGraphLoader extends ReebGraph {
                 ret.add( tmpRG );
             return ret;
         }
-
     }
 
 	public static ArrayList<ReebGraph> load(String inputReebGraph,  boolean splitConnComps, boolean condition, boolean showWarnings ) throws Exception {
