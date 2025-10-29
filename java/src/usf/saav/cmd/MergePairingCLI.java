@@ -30,6 +30,7 @@ package usf.saav.cmd;
 import usf.saav.common.TimerNanosecond;
 import usf.saav.topology.reebgraph.ReebGraph;
 import usf.saav.topology.reebgraph.pairing.MergePairing;
+
 import java.util.*;
 
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class MergePairingCLI {
     static List<Integer> pGlobalIDs = new ArrayList<>();
     static List<Integer> vGlobalIDs = new ArrayList<>();
     static String[] finalGraph = null;
+    static double elapsedTime = 0;
 
     public static String[] getFinalGraph() {
         return finalGraph;
@@ -83,6 +85,33 @@ public class MergePairingCLI {
         }
     }
 
+    public static void mainR(int[] vertexIds,
+                                    float[] vertexWeights,
+                                    int[] edgeOriginIds,
+                                    int[] edgeDestinationIds) {
+        try {
+            usf.saav.cmd.MergePairingResult result = TestResults.runAlgo(vertexIds,
+                    vertexWeights,
+                    edgeOriginIds,
+                    edgeDestinationIds,
+                    new MergePairing(),
+                    new TimerNanosecond(),
+                    false);
+            rg = result.getReebGraphArrayList();
+            elapsedTime = result.getElapsedTime();
+
+            ResultList resultList = TestResults.getResultList(rg);
+            pValues = resultList.pValues;
+            vValues = resultList.vValues;
+            pRealValues = resultList.pRealValues;
+            vRealValues = resultList.vRealValues;
+            pGlobalIDs = resultList.pGlobalIDs;
+            vGlobalIDs = resultList.vGlobalIDs;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private static float[] convertFloatListToArray(List<Float> list) {
         float[] arr = new float[list.size()];
         for(int i = 0; i < list.size(); i++) {
@@ -114,6 +143,7 @@ public class MergePairingCLI {
     }
     public static int[] getPGlobalIDs() {return convertIntegerListToArray(pGlobalIDs);}
     public static int[] getVGlobalIDs() {return convertIntegerListToArray(vGlobalIDs);}
+    public static double getElapsedTime() {return elapsedTime;}
 }
 
 

@@ -25,6 +25,8 @@ public class TestResults {
     Timer mergeTimer = new TimerNanosecond(), ppTimer = new TimerNanosecond();
     ArrayList<ReebGraph> rgMP;
     ArrayList<ReebGraph> rgPP;
+    int timeElapsedMergePairing;
+
 
     private TestResults() {
     }
@@ -284,6 +286,44 @@ public class TestResults {
         //if( verbose ) printPersistentDiagram(rm1);
 
         return rm1;
+    }
+
+    // UF version
+
+    public static MergePairingResult runAlgo(int[] vertexIds,
+                                                        float[] vertexWeights,
+                                                        int[] edgeOriginIds,
+                                                        int[] edgeDestinationIds,
+                                                        Pairing pairing,
+                                                        Timer timer,
+                                                        boolean verbose) throws Exception {
+        Timer t = new TimerMillisecond();
+
+        if (verbose) System.out.println();
+        if (verbose) System.out.println(pairing.getName());
+
+
+
+        MergePairingInput mergePairingInput = new MergePairingInput(vertexIds, vertexWeights, edgeOriginIds, edgeDestinationIds);
+        ArrayList<ReebGraph> rm1 = ReebGraphLoader.load(mergePairingInput, true, true, verbose);
+
+        if (verbose) System.out.println(" Connected components: " + rm1.size());
+
+        // TODO: Add information about elapsed time for the algorithm and send this back to R
+        timer.start();
+        for (ReebGraph ccRG : rm1) {
+            pairing.pair(ccRG);
+        }
+        timer.end();
+
+        MergePairingResult result = new MergePairingResult(rm1, timer.getElapsedMilliseconds());
+
+        if (verbose) System.out.println(" Total Loops: " + countLoops(rm1));
+        if (verbose)
+            System.out.println(" " + pairing.getName() + " computation time: " + timer.getElapsedMilliseconds() + "ms\n");
+        if (verbose) System.out.println(" PERSISTENCE DIAGRAM");
+
+        return result;
     }
 
 
