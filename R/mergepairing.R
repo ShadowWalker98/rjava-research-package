@@ -5,11 +5,15 @@
 #'
 #' @return The output returned by the Java method, typically \code{NULL}, \code{character}, or \code{numeric}, depending on implementation.
 #' @examples
-#' \dontrun{
-#' mergepairing()
-#' }
+#' ( ex_rg <- read_reeb_graph("files/running_example_reeb_graph.txt") )
+#' ex_ph <- mergepairing(
+#'   seq_along(ex_rg$values) - 1, ex_rg$values,
+#'   ex_rg$edgelist[, 1], ex_rg$edgelist[, 2]
+#' )
+#' print(ex_ph)
+#' attr(ex_ph, "elapsedTime")
+#'
 #' @export
-
 mergepairing <- function(vertex_indices, vertex_values, edges_from, edges_to) {
 
   # change value to height
@@ -61,9 +65,9 @@ mergepairing <- function(vertex_indices, vertex_values, edges_from, edges_to) {
     death_index = pGlobalIDs,
     # need to carefully interpret these
     birth_order = vValues,
-    death_order = pValues,
-    elapsedTime = elapsedTime
+    death_order = pValues
   )
+  attr(res, "elapsedTime") <- elapsedTime
   res
 }
 
