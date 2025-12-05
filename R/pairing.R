@@ -30,6 +30,9 @@ pairing <- function(vertex_indices, vertex_heights, edge_list, method) {
   } else if(tolower(method) == propagate_pairing_method) {
     pairing_java_object <- paste(java_package_period_delimited, propagatepair_java_class_name, sep = "")
     pairing_java_file_path <- paste(java_package_class_path, propagatepair_java_class_name, sep="")
+  } else {
+    print("method must be either \"single_pass\" or \"multi_pass\"")
+    return("ERROR")
   }
 
   jhw <- .jnew(pairing_java_object)
