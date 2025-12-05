@@ -1,47 +1,65 @@
 
+propagatepair_java_class_name <- "PPPairingCLI"
+mergepairing_java_class_name <- "MergePairingCLI"
 
-propagatepair <- function(vertex_indices, vertex_heights, edges_from, edges_to) {
+merge_pairing_method <- "single_pass"
+propagate_pairing_method <- "multi_pass"
 
-  # change value to height
-  # do floats and doubles differ for R and java
+java_package_period_delimited <- "usf.saav.cmd."
+java_package_class_path <- "usf/saav/cmd/"
 
-  # reading in a sample test file
-  files <- .jarray(c("./files/mergepairingtest.txt"))
+pairing <- function(vertex_indices, vertex_heights, edge_list, method) {
+
   # converting R vectors into the required format for java
   vertex_indices_java <- .jarray(as.integer(vertex_indices))
   vertex_heights_java <- .jfloat(vertex_heights)
-  edges_from_java <- .jarray(as.integer(edges_from))
-  edges_to_java <- .jarray(as.integer(edges_to))
+  # first column is the origin vertex
+  edges_from_java <- .jarray(as.integer(as.list(edge_list[, 1])))
+  # second column is the destination vertex
+  edges_to_java <- .jarray(as.integer(as.list(edge_list[, 2])))
 
-  # creating a java object of type MergePairingCLI
-  jhw <- .jnew("usf.saav.cmd.PPPairingCLI")
+  # variable holding the name of the java class we need to instantiate for the pairing method we require
+  pairing_java_object <- ""
+  # the java project file path of the corresponding pairing type
+  pairing_java_file_path <- ""
+
+  # dynamically deciding which pairing to use based on the method
+  if( tolower(method) == merge_pairing_method) {
+    pairing_java_object <- paste(java_package_period_delimited, mergepairing_java_class_name, sep = "")
+    pairing_java_file_path <- paste(java_package_class_path, mergepairing_java_class_name, sep="")
+  } else if(tolower(method) == propagate_pairing_method) {
+    pairing_java_object <- paste(java_package_period_delimited, propagatepair_java_class_name, sep = "")
+    pairing_java_file_path <- paste(java_package_class_path, propagatepair_java_class_name, sep="")
+  }
+
+  jhw <- .jnew(pairing_java_object)
   # calling method to run propagate pairing algorithm for custom lists
   .jcall(jhw, "V", "mainR", vertex_indices_java, vertex_heights_java, edges_from_java, edges_to_java)
 
   # retrieving the prepopulated list
-  rlist <- .jcall("usf/saav/cmd/PPPairingCLI",
+  rlist <- .jcall(pairing_java_file_path,
                   "[Ljava/lang/String;", "getFinalGraph")
 
   # retrieving the separate lists
-  pValues <- .jcall("usf/saav/cmd/PPPairingCLI",
+  pValues <- .jcall(pairing_java_file_path,
                     "[F", "getPValues")
 
-  pRealValues <- .jcall("usf/saav/cmd/PPPairingCLI",
+  pRealValues <- .jcall(pairing_java_file_path,
                         "[F", "getPRealValues")
 
-  vValues <- .jcall("usf/saav/cmd/PPPairingCLI",
+  vValues <- .jcall(pairing_java_file_path,
                     "[F", "getVValues")
 
-  vRealValues <- .jcall("usf/saav/cmd/PPPairingCLI",
+  vRealValues <- .jcall(pairing_java_file_path,
                         "[F", "getVRealValues")
 
-  pGlobalIDs <- .jcall("usf/saav/cmd/PPPairingCLI",
+  pGlobalIDs <- .jcall(pairing_java_file_path,
                        "[I", "getPGlobalIDs")
 
-  vGlobalIDs <- .jcall("usf/saav/cmd/PPPairingCLI",
+  vGlobalIDs <- .jcall(pairing_java_file_path,
                        "[I", "getVGlobalIDs")
 
-  elapsedTime <- .jcall("usf/saav/cmd/PPPairingCLI",
+  elapsedTime <- .jcall(pairing_java_file_path,
                         "D", "getElapsedTime")
 
   res <- data.frame(
@@ -58,7 +76,7 @@ propagatepair <- function(vertex_indices, vertex_heights, edges_from, edges_to) 
 }
 
 
-test_pp <- function() {
+test_pairing_method <- function() {
   vertex_indices <- c(
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
     11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
@@ -92,6 +110,10 @@ test_pp <- function() {
     30, 32, 31, 33, 34, 35, 36, 38, 40, 39
   )
 
-  print(propagatepair(vertex_indices, vertex_values, edges_from, edges_to))
+  print("Merge Pairing")
+  print(pairing(vertex_indices, vertex_values, cbind(edges_from, edges_to), "single_pass"))
+
+  print("Propagate Pairing")
+  print(pairing(vertex_indices, vertex_values, cbind(edges_from, edges_to), "multi_pass"))
 
 }

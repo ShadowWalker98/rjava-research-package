@@ -19,6 +19,10 @@ public class PPPairingCLI {
     static String[] finalGraph = null;
     static double elapsedTime = 0;
 
+    public static String[] getFinalGraph() {
+        return finalGraph;
+    }
+
 
 	public static void main(String[] args) {
 		

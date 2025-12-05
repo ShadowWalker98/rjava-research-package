@@ -65,9 +65,9 @@ mergepairing <- function(vertex_indices, vertex_values, edges_from, edges_to) {
     death_index = pGlobalIDs,
     # need to carefully interpret these
     birth_order = vValues,
-    death_order = pValues
+    death_order = pValues,
+    elapsedTime = elapsedTime
   )
-  attr(res, "elapsedTime") <- elapsedTime
   res
 }
 
